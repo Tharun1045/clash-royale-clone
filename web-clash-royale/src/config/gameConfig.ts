@@ -1,9 +1,8 @@
-/* ==========================================
-   CLASH ROYALE CLONE - UNIT DATABASE & DEFINITIONS
-   ========================================== */
+/* Game Statistics Configuration Registry (ES Modules) */
 
-// All cards registry
-const CARD_TEMPLATES = {
+import { CardDefinition, UnitDefinition, SpellDefinition, TowerDefinition } from '../types/game';
+
+export const CARD_TEMPLATES: Record<string, CardDefinition> = {
   knight: {
     id: 'knight',
     name: 'Knight',
@@ -11,10 +10,7 @@ const CARD_TEMPLATES = {
     icon: '⚔️',
     rarity: 'common',
     description: 'Tough melee fighter. Solid on defense and offense.',
-    type: 'troop',
-    spawn: (engine, x, y, team) => {
-      engine.spawnUnit('knight', x, y, team);
-    }
+    type: 'troop'
   },
   archers: {
     id: 'archers',
@@ -23,11 +19,7 @@ const CARD_TEMPLATES = {
     icon: '🏹',
     rarity: 'common',
     description: 'A pair of light ranged attackers. Target air and ground.',
-    type: 'troop',
-    spawn: (engine, x, y, team) => {
-      engine.spawnUnit('archer', x - 15, y, team);
-      engine.spawnUnit('archer', x + 15, y, team);
-    }
+    type: 'troop'
   },
   giant: {
     id: 'giant',
@@ -36,10 +28,7 @@ const CARD_TEMPLATES = {
     icon: '✊',
     rarity: 'rare',
     description: 'Slow but massive. Targets only towers and buildings.',
-    type: 'troop',
-    spawn: (engine, x, y, team) => {
-      engine.spawnUnit('giant', x, y, team);
-    }
+    type: 'troop'
   },
   baby_dragon: {
     id: 'baby_dragon',
@@ -48,10 +37,7 @@ const CARD_TEMPLATES = {
     icon: '🐉',
     rarity: 'epic',
     description: 'Flying ranged troop. Attacks air/ground with splash damage.',
-    type: 'troop',
-    spawn: (engine, x, y, team) => {
-      engine.spawnUnit('baby_dragon', x, y, team);
-    }
+    type: 'troop'
   },
   skeleton_army: {
     id: 'skeleton_army',
@@ -59,19 +45,8 @@ const CARD_TEMPLATES = {
     cost: 3,
     icon: '💀',
     rarity: 'epic',
-    description: 'Spawns a swarm of skeletons to overwhelm heavy units.',
-    type: 'troop',
-    spawn: (engine, x, y, team) => {
-      // Spawn 12 skeletons in a circle
-      const numSkeletons = 12;
-      const radius = 25;
-      for (let i = 0; i < numSkeletons; i++) {
-        const angle = (i / numSkeletons) * Math.PI * 2;
-        const sx = x + Math.cos(angle) * radius + (Math.random() - 0.5) * 5;
-        const sy = y + Math.sin(angle) * radius + (Math.random() - 0.5) * 5;
-        engine.spawnUnit('skeleton', sx, sy, team);
-      }
-    }
+    description: 'Spawns a swarm of Skeletons to overwhelm heavy units.',
+    type: 'troop'
   },
   mini_pekka: {
     id: 'mini_pekka',
@@ -80,10 +55,7 @@ const CARD_TEMPLATES = {
     icon: '🤖',
     rarity: 'rare',
     description: 'Fast, high-damage melee attacker. Fragile but deadly.',
-    type: 'troop',
-    spawn: (engine, x, y, team) => {
-      engine.spawnUnit('mini_pekka', x, y, team);
-    }
+    type: 'troop'
   },
   fireball: {
     id: 'fireball',
@@ -92,10 +64,7 @@ const CARD_TEMPLATES = {
     icon: '🔥',
     rarity: 'rare',
     description: 'Deals high area damage anywhere on the battlefield.',
-    type: 'spell',
-    spawn: (engine, x, y, team) => {
-      engine.spawnSpell('fireball', x, y, team);
-    }
+    type: 'spell'
   },
   arrows: {
     id: 'arrows',
@@ -104,22 +73,18 @@ const CARD_TEMPLATES = {
     icon: '💨',
     rarity: 'common',
     description: 'Large area spell. Weak but perfect for clearing swarms.',
-    type: 'spell',
-    spawn: (engine, x, y, team) => {
-      engine.spawnSpell('arrows', x, y, team);
-    }
+    type: 'spell'
   }
 };
 
-// Unit Base Stats Registry
-const UNIT_STATS = {
+export const UNIT_STATS: Record<string, UnitDefinition> = {
   knight: {
     name: 'Knight',
     hp: 750,
     speed: 1.4,
     range: 22,
     damage: 130,
-    hitSpeed: 1.2, // seconds per hit
+    hitSpeed: 1.2,
     targets: 'any',
     isAir: false,
     radius: 11,
@@ -195,14 +160,13 @@ const UNIT_STATS = {
   }
 };
 
-// Spell Stats Registry
-const SPELL_STATS = {
+export const SPELL_STATS: Record<string, SpellDefinition> = {
   fireball: {
     name: 'Fireball',
     damage: 320,
     towerDamage: 120,
     radius: 50,
-    travelTime: 500, // milliseconds
+    travelTime: 500,
     color: '#e74c3c',
     particleColor: '#f39c12',
     icon: '🔥'
@@ -219,8 +183,7 @@ const SPELL_STATS = {
   }
 };
 
-// Tower Base Stats
-const TOWER_STATS = {
+export const TOWER_STATS: Record<string, TowerDefinition> = {
   princess: {
     hp: 1800,
     range: 140,
@@ -237,8 +200,5 @@ const TOWER_STATS = {
   }
 };
 
-// Default 8-card deck
-const DEFAULT_DECK = ['knight', 'archers', 'giant', 'baby_dragon', 'skeleton_army', 'mini_pekka', 'fireball', 'arrows'];
-
-// Full pool of cards for deck building
-const FULL_COLLECTION = Object.keys(CARD_TEMPLATES);
+export const DEFAULT_DECK = ['knight', 'archers', 'giant', 'baby_dragon', 'skeleton_army', 'mini_pekka', 'fireball', 'arrows'];
+export const FULL_COLLECTION = Object.keys(CARD_TEMPLATES);

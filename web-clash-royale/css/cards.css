@@ -1,0 +1,219 @@
+/* 3D-styled illustrated cards */
+.card {
+  aspect-ratio: 2.7/4; /* taller profile */
+  background: #202430;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 0;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all var(--transition-normal);
+  box-shadow: 
+    0 6px 12px rgba(0, 0, 0, 0.45),
+    inset 0 1px 1px rgba(255, 255, 255, 0.15);
+  border: 2px solid #3c3f50;
+  transform-style: preserve-3d;
+  perspective: 500px;
+}
+
+/* Card Rarity borders & glows */
+.card.rarity-common {
+  border-color: #00cccc;
+  box-shadow: 0 4px 10px rgba(0, 204, 204, 0.15), 0 6px 12px rgba(0,0,0,0.4);
+}
+.card.rarity-common:hover {
+  border-color: #00ffff;
+  box-shadow: 0 0 18px rgba(0, 255, 255, 0.5), 0 8px 20px rgba(0,0,0,0.5);
+  transform: translateY(-6px) scale(1.03);
+}
+
+.card.rarity-rare {
+  border-color: #2a82e6;
+  box-shadow: 0 4px 10px rgba(42, 130, 230, 0.18), 0 6px 12px rgba(0,0,0,0.4);
+}
+.card.rarity-rare:hover {
+  border-color: #5dade2;
+  box-shadow: 0 0 18px rgba(42, 130, 230, 0.65), 0 8px 20px rgba(0,0,0,0.5);
+  transform: translateY(-6px) scale(1.03);
+}
+
+.card.rarity-epic {
+  border-color: #d633ff;
+  box-shadow: 0 4px 10px rgba(214, 51, 255, 0.2), 0 6px 12px rgba(0,0,0,0.4);
+}
+.card.rarity-epic:hover {
+  border-color: #f066ff;
+  box-shadow: 0 0 18px rgba(214, 51, 255, 0.7), 0 8px 20px rgba(0,0,0,0.5);
+  transform: translateY(-6px) scale(1.03);
+}
+
+.card.selected-for-swap {
+  border-color: var(--color-gold) !important;
+  box-shadow: 0 0 22px var(--color-gold-glow), 0 8px 20px rgba(0,0,0,0.5) !important;
+  transform: scale(1.06) translateY(-4px) !important;
+}
+
+/* Card drag slide fade out */
+.card.dragging-active {
+  opacity: 0.15 !important;
+  transform: scale(0.8) !important;
+  pointer-events: none !important;
+  box-shadow: none !important;
+  transition: opacity 0.15s ease, transform 0.15s ease !important;
+}
+
+/* Holographic sheen highlight animation */
+.card-sheen {
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.12) 30%,
+    rgba(255, 255, 255, 0.28) 50%,
+    rgba(255, 255, 255, 0.12) 70%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: skewX(-20deg);
+  transition: none;
+  pointer-events: none;
+  z-index: 8;
+}
+
+.card:hover .card-sheen {
+  left: 150%;
+  transition: left 0.8s ease-in-out;
+}
+
+/* Elixir Droplet Tag */
+.card-elixir {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 25px;
+}
+
+.elixir-drop {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(135deg, #f066ff 0%, #aa00cc 100%);
+  border-radius: 0 50% 50% 50%;
+  transform: rotate(45deg);
+  box-shadow: 0 2px 6px rgba(170, 0, 204, 0.6), inset 0 1px 1px rgba(255,255,255,0.3);
+  border: 1px solid white;
+}
+
+.elixir-num {
+  position: relative;
+  z-index: 2;
+  color: white;
+  font-weight: 900;
+  font-size: 0.8rem;
+  text-shadow: 0 1.5px 2px rgba(0, 0, 0, 0.8);
+  font-family: var(--font-primary);
+}
+
+/* Card Portrait Art */
+.card-image-wrapper {
+  width: 100%;
+  height: 72%;
+  background: #11141c;
+  overflow: hidden;
+  border-bottom: 2.5px solid #2d303f;
+  position: relative;
+}
+
+.card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.card:hover .card-image {
+  transform: scale(1.06);
+}
+
+/* Wood Bottom Banner Nameplate */
+.card-bottom-banner {
+  position: absolute;
+  top: 66%;
+  left: 4%;
+  right: 4%;
+  height: 20px;
+  background: linear-gradient(180deg, #875e3c 0%, #5c3c24 100%);
+  border-radius: 4px;
+  border: 1px solid #422a18;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.25);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9;
+}
+
+.card-name {
+  font-size: 0.52rem !important;
+  font-weight: 900;
+  text-align: center;
+  text-transform: uppercase;
+  color: #ffebcc;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.9);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 90%;
+}
+
+.card-lvl {
+  font-size: 0.38rem;
+  font-weight: 800;
+  color: #ffcc00;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.9);
+  margin-top: -1px;
+  text-transform: uppercase;
+}
+
+/* Upgrade Level Bar Fill */
+.card-progress-bar {
+  position: absolute;
+  bottom: 4px;
+  left: 6px;
+  right: 6px;
+  height: 6px;
+  background: #11131c;
+  border-radius: 4px;
+  border: 1px solid #000;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.card-progress-fill {
+  height: 100%;
+  background: linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
+  border-radius: 2px;
+}
+
+.card-progress-text {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  color: white;
+  font-size: 0.42rem;
+  font-weight: 900;
+  text-shadow: 0 1px 1px black;
+  pointer-events: none;
+}

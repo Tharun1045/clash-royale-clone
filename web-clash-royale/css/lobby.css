@@ -1,0 +1,240 @@
+/* Game Lobby / Home Screen CSS */
+#menu-screen {
+  background: linear-gradient(135deg, #111424 0%, #080911 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 16px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Background animated particle glow shapes */
+#menu-screen::before {
+  content: '';
+  position: absolute;
+  top: -10%;
+  left: -20%;
+  width: 140%;
+  height: 120%;
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(52, 152, 219, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(170, 0, 204, 0.15) 0%, transparent 40%);
+  filter: blur(40px);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Header Info Panel (Profile, Currencies) */
+.lobby-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 5;
+  margin-bottom: 20px;
+}
+
+.profile-panel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
+  padding: 4px 12px;
+  border-radius: 30px;
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: var(--shadow-sm);
+}
+
+.profile-avatar-shield {
+  font-size: 1.4rem;
+  background: linear-gradient(135deg, #e74c3c 0%, #900c3f 100%);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1.5px solid #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+}
+
+.profile-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-name {
+  font-weight: 900;
+  font-size: 0.8rem;
+  color: #fff;
+  text-shadow: 0 1px 2px black;
+}
+
+.trophy-badge {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #f1c40f;
+}
+
+.trophy-badge::before {
+  content: '🏆';
+  font-size: 0.65rem;
+}
+
+/* Currency Counters */
+.currency-container {
+  display: flex;
+  gap: 8px;
+}
+
+.currency-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.45);
+  padding: 4px 8px;
+  border-radius: 12px;
+  border: 1.5px solid #2d303f;
+  min-width: 65px;
+  box-shadow: var(--shadow-inset);
+}
+
+.currency-val {
+  font-weight: 900;
+  font-size: 0.72rem;
+  color: #fff;
+}
+
+.currency-box.gold::before { content: '🪙'; font-size: 0.8rem; }
+.currency-box.gems::before { content: '💎'; font-size: 0.8rem; }
+
+/* Game Logo */
+.logo-container {
+  text-align: center;
+  z-index: 5;
+  margin-top: 10px;
+}
+
+.game-title {
+  font-size: 2.3rem;
+  font-weight: 900;
+  color: #ffebcc;
+  text-shadow: 
+    0 2px 0 #875e3c,
+    0 4px 0 #5c3c24,
+    0 6px 12px rgba(0,0,0,0.8);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-family: var(--font-primary);
+  animation: logo-float 4s ease-in-out infinite alternate;
+}
+
+@keyframes logo-float {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-8px); }
+}
+
+/* Battle Action Center */
+.battle-action-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  z-index: 5;
+  margin-bottom: 20px;
+}
+
+.btn-battle {
+  width: 170px;
+  height: 64px;
+  font-size: 1.35rem;
+  border-radius: var(--border-radius-lg);
+  animation: battle-pulse 2s infinite;
+  box-shadow: 0 6px 20px rgba(241,196,15,0.4), inset 0 2px 0 rgba(255,255,255,0.4);
+}
+
+@keyframes battle-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.04); box-shadow: 0 8px 25px rgba(241,196,15,0.6), inset 0 2px 0 rgba(255,255,255,0.4); }
+  100% { transform: scale(1); }
+}
+
+/* Deck Preview Panel */
+.lobby-deck-preview {
+  background: rgba(20, 24, 38, 0.7);
+  border: 1.5px solid #2d303f;
+  border-radius: var(--border-radius-lg);
+  padding: 10px;
+  width: 100%;
+  box-shadow: var(--shadow-md);
+}
+
+.deck-preview-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.deck-mini-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+}
+
+.mini-card-preview {
+  aspect-ratio: 2.7/4;
+  border-radius: var(--border-radius-sm);
+  background: #11141c;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.06);
+  position: relative;
+}
+
+.mini-card-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.9;
+}
+
+/* Bottom Lobby Navigation */
+.lobby-nav {
+  height: 52px;
+  background: linear-gradient(180deg, #1f222e 0%, #151720 100%);
+  border-top: 2px solid #2d303f;
+  display: flex;
+  margin: 0 -16px -16px -16px;
+  z-index: 10;
+  box-shadow: 0 -4px 10px rgba(0,0,0,0.5);
+}
+
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.58rem;
+  font-weight: 800;
+  gap: 3px;
+  transition: color var(--transition-fast);
+}
+
+.nav-item.active {
+  color: var(--color-gold);
+  background: rgba(255,255,255,0.02);
+  border-bottom: 3.5px solid var(--color-gold);
+}
+
+.nav-icon {
+  font-size: 1.1rem;
+}

@@ -1,0 +1,50 @@
+/* Design Tokens */
+:root {
+  /* Colors */
+  --color-blue: #3498db;
+  --color-blue-dark: #1b4f72;
+  --color-blue-glow: rgba(52, 152, 219, 0.6);
+  
+  --color-red: #e74c3c;
+  --color-red-dark: #78281f;
+  --color-red-glow: rgba(231, 76, 60, 0.6);
+  
+  --color-gold: #f1c40f;
+  --color-gold-dark: #9a7d0a;
+  --color-gold-glow: rgba(241, 196, 15, 0.6);
+  
+  --color-elixir: #d633ff;
+  --color-elixir-dark: #800080;
+  --color-elixir-glow: rgba(214, 51, 255, 0.5);
+  
+  --color-stone-light: #95a5a6;
+  --color-stone-dark: #34495e;
+  
+  --color-grass-light: #2ecc71;
+  --color-grass-dark: #27ae60;
+  
+  --bg-main: #0b0c10;
+  --bg-secondary: #1f2833;
+  --text-main: #c5a880; /* Warm gold/tan font color */
+  --text-white: #ffffff;
+  --text-muted: #888a9c;
+  
+  /* Borders & Shadows */
+  --border-radius-sm: 4px;
+  --border-radius-md: 10px;
+  --border-radius-lg: 20px;
+  
+  --border-glass: rgba(255, 255, 255, 0.08);
+  --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.7);
+  --shadow-inset: inset 0 2px 4px rgba(0, 0, 0, 0.6);
+  
+  /* Timing */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s cubic-bezier(0.25, 0.8, 0.25, 1.0);
+  --transition-bounce: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  
+  /* Fonts */
+  --font-primary: 'Outfit', 'Montserrat', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}

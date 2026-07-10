@@ -2,184 +2,23 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Clash Royale Web Clone - Play vs AI Bot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Royal Arenas - Web Strategy Game</title>
+  <!-- Google Fonts for premium typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Main Viewport Wrapper -->
-  <div class="game-container">
-    <div class="mobile-frame">
-      
-      <!-- 1. MAIN MENU SCREEN -->
-      <div id="menu-screen" class="screen active">
-        <div class="logo-container">
-          <h1 class="game-title">CLASH<br><span class="highlight">ROYALE</span></h1>
-          <p class="subtitle">AI BATTLEGROUND</p>
-        </div>
-        
-        <div class="menu-content">
-          <div class="card-preview-slider">
-            <!-- Dynamic visual showcase of cards -->
-            <div class="preview-card knight-anim">⚔️</div>
-            <div class="preview-card dragon-anim">🐉</div>
-            <div class="preview-card skeleton-anim">💀</div>
-          </div>
-          
-          <div class="difficulty-picker">
-            <label>BOT DIFFICULTY</label>
-            <div class="diff-options">
-              <button class="diff-btn" data-diff="easy">EASY</button>
-              <button class="diff-btn active" data-diff="medium">MEDIUM</button>
-              <button class="diff-btn" data-diff="hard">HARD</button>
-            </div>
-          </div>
-          
-          <button id="play-btn" class="btn btn-primary btn-battle">BATTLE</button>
-          <button id="deck-btn" class="btn btn-secondary">MANAGE DECK</button>
-        </div>
-        <div class="footer-note">Antigravity Studio &copy; 2026</div>
-      </div>
 
-      <!-- 2. DECK SELECTION SCREEN -->
-      <div id="deck-screen" class="screen">
-        <header class="screen-header">
-          <button id="deck-back-btn" class="back-btn">&larr;</button>
-          <h2>DECK BUILDER</h2>
-        </header>
-        
-        <div class="deck-scroll-container">
-          <div class="deck-section-title">ACTIVE DECK (8 CARDS)</div>
-          <div class="deck-grid active-deck-grid" id="active-deck">
-            <!-- Populated dynamically via JS -->
-          </div>
-          
-          <div class="deck-section-title">CARD COLLECTION (TAP TO SWAP)</div>
-          <div class="deck-grid collection-deck-grid" id="collection-deck">
-            <!-- Populated dynamically via JS -->
-          </div>
-        </div>
-        <div class="deck-footer">
-          <button id="deck-save-btn" class="btn btn-primary">SAVE & CLOSE</button>
-        </div>
-      </div>
-
-      <!-- 3. BATTLE ARENA SCREEN -->
-      <div id="battle-screen" class="screen">
-        <!-- Top HUD (Opponent Info) -->
-        <div class="hud hud-top">
-          <div class="player-info">
-            <span class="avatar">🤖</span>
-            <div class="name-status">
-              <span class="player-name">Robot (AI)</span>
-              <span id="bot-difficulty-label" class="difficulty-tag">MEDIUM</span>
-            </div>
-          </div>
-          <div class="crown-counter">
-            <span id="bot-crowns" class="crown red-crown">0</span>
-            <span class="vs-divider">:</span>
-            <span id="player-crowns" class="crown blue-crown">0</span>
-          </div>
-          <div class="timer-container">
-            <span id="game-timer">3:00</span>
-          </div>
-        </div>
-
-        <!-- Canvas Battlefield Container -->
-        <div class="battlefield-container" id="canvas-container">
-          <canvas id="battle-canvas"></canvas>
-          <div id="sudden-death-overlay" class="sudden-death-overlay">
-            <h2>SUDDEN DEATH!</h2>
-            <p>2x Elixir - First crown wins!</p>
-          </div>
-          <!-- Floating Emote Text Area -->
-          <div id="emote-display-area" class="emote-display-area"></div>
-        </div>
-
-        <!-- Bottom HUD (Player Hand & Elixir) -->
-        <div class="hud-bottom-container">
-          <!-- Emote tray button & floating tray -->
-          <div class="emote-tray-container">
-            <button id="emote-trigger" class="emote-trigger-btn">💬</button>
-            <div id="emote-tray" class="emote-tray hidden">
-              <button class="emote-btn" data-emote="👍">👍</button>
-              <button class="emote-btn" data-emote="😂">😂</button>
-              <button class="emote-btn" data-emote="😭">😭</button>
-              <button class="emote-btn" data-emote="😡">😡</button>
-              <button class="emote-btn" data-emote="😮">😮</button>
-            </div>
-          </div>
-
-          <!-- Elixir Bar -->
-          <div class="elixir-bar-wrapper">
-            <div class="elixir-count"><span id="elixir-count">5</span></div>
-            <div class="elixir-progress-bg">
-              <div class="elixir-progress" id="elixir-progress" style="width: 50%;"></div>
-              <!-- Elixir dividers -->
-              <div class="elixir-divider" style="left: 10%;"></div>
-              <div class="elixir-divider" style="left: 20%;"></div>
-              <div class="elixir-divider" style="left: 30%;"></div>
-              <div class="elixir-divider" style="left: 40%;"></div>
-              <div class="elixir-divider" style="left: 50%;"></div>
-              <div class="elixir-divider" style="left: 60%;"></div>
-              <div class="elixir-divider" style="left: 70%;"></div>
-              <div class="elixir-divider" style="left: 80%;"></div>
-              <div class="elixir-divider" style="left: 90%;"></div>
-            </div>
-          </div>
-
-          <!-- Hand & Actions -->
-          <div class="player-controls">
-            <!-- Next Card preview -->
-            <div class="next-card-container">
-              <span class="label">NEXT</span>
-              <div class="card next-card" id="next-card-slot">
-                <!-- Populated via JS -->
-              </div>
-            </div>
-
-            <!-- Main Hand (4 Cards) -->
-            <div class="hand-container" id="player-hand">
-              <!-- Populated via JS -->
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 4. GAME OVER SCREEN -->
-      <div id="gameover-screen" class="screen">
-        <div class="gameover-box">
-          <h2 id="gameover-title" class="victory-text">VICTORY</h2>
-          <div class="gameover-stats">
-            <div class="stat-crowns">
-              <span id="final-player-crowns" class="crown blue-crown">2</span>
-              <span class="vs-divider">-</span>
-              <span id="final-bot-crowns" class="crown red-crown">1</span>
-            </div>
-            <p id="gameover-message">You outsmarted the Robot!</p>
-          </div>
-          <button id="restart-btn" class="btn btn-primary">PLAY AGAIN</button>
-          <button id="menu-btn" class="btn btn-secondary">MAIN MENU</button>
-        </div>
-      </div>
-      
-    </div>
+  <!-- Mobile Screen Frame Centering -->
+  <div class="mobile-frame">
+    <!-- Phaser WebGL canvas renders inside this container parent -->
+    <div id="game-container"></div>
   </div>
 
-  <!-- Sound Synth Engine -->
-  <script src="js/audio.js"></script>
-  <!-- Card Database and Rendering Setup -->
-  <script src="js/units.js"></script>
-  <!-- Mechanics, Physics & Calculations -->
-  <script src="js/engine.js"></script>
-  <!-- Smart Robot Decisions -->
-  <script src="js/ai.js"></script>
-  <!-- Application & Gameplay Interactions -->
-  <script src="js/game.js"></script>
-  <!-- Automated Tests -->
-  <script src="js/tests.js"></script>
+  <!-- Vite module entry point -->
+  <script type="module" src="/src/main.ts"></script>
 </body>
 </html>
