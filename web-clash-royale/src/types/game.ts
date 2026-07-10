@@ -18,6 +18,23 @@ export interface CardDefinition {
   rarity: RarityType;
   description: string;
   type: CardType;
+  /** Key into UNIT_STATS — may differ from card id (e.g. 'archers' → 'archer') */
+  unitType?: string;
+  /** Number of units to spawn (e.g. skeleton_army → 6) */
+  spawnCount?: number;
+}
+
+export interface DeploymentState {
+  selectedCardId: string | null;
+  selectedHandIndex: number | null;
+  isDragging: boolean;
+  dragPreview: unknown | null;
+  placementPreview: unknown | null;
+}
+
+export interface DeploymentResult {
+  success: boolean;
+  reason?: string;
 }
 
 export interface UnitDefinition {

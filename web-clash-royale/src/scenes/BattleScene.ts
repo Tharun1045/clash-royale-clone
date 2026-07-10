@@ -6,6 +6,7 @@ import { Tower } from '../entities/Tower';
 import { Projectile } from '../entities/Projectile';
 import { ElixirSystem } from '../systems/ElixirSystem';
 import { AISystem } from '../systems/AISystem';
+import { DeploymentSystem } from '../systems/DeploymentSystem';
 import { CombatSystem, CombatEntity } from '../systems/CombatSystem';
 import { Pathfinding } from '../utils/Pathfinding';
 import { CARD_TEMPLATES, SPELL_STATS } from '../config/gameConfig';
@@ -14,6 +15,7 @@ export class BattleScene extends Phaser.Scene {
   // Systems
   private elixirSystem!: ElixirSystem;
   private aiSystem!: AISystem;
+  private deploymentSystem!: DeploymentSystem;
   
   // Game state
   private activeDeck: string[] = [];
@@ -32,11 +34,6 @@ export class BattleScene extends Phaser.Scene {
   private enemyUnits!: Phaser.GameObjects.Group;
   private projectiles!: Phaser.GameObjects.Group;
   private towers!: Phaser.GameObjects.Group;
-
-  // Drag and Drop Deployment
-  private draggingCardId: string | null = null;
-  private draggingCardSlotIndex = -1;
-  private dragPreviewCircle: Phaser.GameObjects.Graphics | null = null;
 
   // UI objects
   private elixirFillBar!: Phaser.GameObjects.Graphics;
@@ -59,6 +56,9 @@ export class BattleScene extends Phaser.Scene {
   }
 
   init(): void {
+    // Reset arrays for scene restart
+    this.handCardImages = [];
+
     // Load player deck
     const saved = localStorage.getItem('player_deck');
     if (saved) {
@@ -108,15 +108,36 @@ export class BattleScene extends Phaser.Scene {
     // 3. Setup HUD UI Panel Overlay
     this.createHUD(width, height);
 
-    // 4. Setup Input Drag listeners
-    this.setupCardDragListeners(height);
+    // 4. Setup Deployment System (replaces old broken drag listeners)
+    this.deploymentSystem = new DeploymentSystem(
+      this,
+      this.elixirSystem,
+      this.playerHand,
+      this.deckQueue,
+      this.nextCard,
+      this.handCardImages,
+      this.nextCardImage,
+      {
+        onUnitSpawned: (unit: Unit) => {
+          this.playerUnits.add(unit);
+        },
+        getPlayerUnits: () => this.playerUnits,
+        getEnemyUnits: () => this.enemyUnits,
+        getTowers: () => this.towers
+      }
+    );
 
-    // 5. Timer timer loop
+    // 5. Timer loop
     this.time.addEvent({
       delay: 1000,
       callback: this.tickTimer,
       callbackScope: this,
       loop: true
+    });
+
+    // 6. Cleanup on scene shutdown (prevents duplicate listeners on restart)
+    this.events.on('shutdown', () => {
+      this.deploymentSystem.destroy();
     });
   }
 
@@ -358,9 +379,9 @@ export class BattleScene extends Phaser.Scene {
     elixirPanel.fillRect(0, height - 120, width, 120);
     elixirPanel.lineStyle(2, 0x2d303f, 1);
     elixirPanel.strokeLineShape(new Phaser.Geom.Line(0, height - 120, width, height - 120));
+    elixirPanel.setDepth(150);
 
     this.elixirFillBar = this.add.graphics();
-    elixirPanel.setDepth(150);
     this.elixirFillBar.setDepth(160);
 
     // Elixir value count text
@@ -394,171 +415,41 @@ export class BattleScene extends Phaser.Scene {
     this.nextCardImage.setAlpha(0.65);
   }
 
-  private setupCardDragListeners(height: number): void {
-    // Circular preview AOE ring
-    this.dragPreviewCircle = this.add.graphics();
-    this.dragPreviewCircle.setDepth(90);
-
-    this.input.on('pointerdown', (_pointer: Phaser.Input.Pointer, gameObjects: any[]) => {
-      if (this.isGameOver) return;
-
-      // Check if clicked card image slot
-      const clickedCardImg = gameObjects[0] as Phaser.GameObjects.Image;
-      if (clickedCardImg && this.handCardImages.includes(clickedCardImg)) {
-        const index = this.handCardImages.indexOf(clickedCardImg);
-        const cardId = this.playerHand[index];
-        const cardDef = CARD_TEMPLATES[cardId];
-
-        if (cardDef && this.elixirSystem.canSpend(cardDef.cost)) {
-          this.draggingCardId = cardId;
-          this.draggingCardSlotIndex = index;
-
-          // Lift card feedback
-          this.tweens.add({
-            targets: clickedCardImg,
-            y: height - 70,
-            scaleX: 1.15,
-            scaleY: 1.15,
-            duration: 100
-          });
-        }
-      }
-    });
-
-    this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
-      if (!this.draggingCardId) return;
-
-      // Update drag circles preview rings
-      this.dragPreviewCircle!.clear();
-      
-      const isSpell = CARD_TEMPLATES[this.draggingCardId].type === 'spell';
-      const rangeVal = isSpell ? (SPELL_STATS[this.draggingCardId].radius || 50) : 25;
-      const isValidZone = pointer.y > 320 && pointer.y < height - 120; // player field limit
-
-      const color = isValidZone ? 0x2ecc71 : 0xe74c3c;
-      this.dragPreviewCircle!.lineStyle(2, color, 0.65);
-      
-      if (isSpell) {
-        this.dragPreviewCircle!.strokeCircle(pointer.x, pointer.y, rangeVal);
-      } else {
-        this.dragPreviewCircle!.strokeRect(pointer.x - rangeVal, pointer.y - rangeVal, rangeVal * 2, rangeVal * 2);
-      }
-    });
-
-    this.input.on('pointerup', (pointer: Phaser.Input.Pointer) => {
-      if (!this.draggingCardId) return;
-
-      const cardDef = CARD_TEMPLATES[this.draggingCardId];
-      const isValidZone = pointer.y > 320 && pointer.y < height - 120;
-
-      if (isValidZone && this.elixirSystem.spend(cardDef.cost)) {
-        // Deploy unit/spell on coordinates
-        this.deployPlayerCard(this.draggingCardId, pointer.x, pointer.y);
-
-        // Cycle deck hand
-        this.playerHand[this.draggingCardSlotIndex] = this.nextCard;
-        this.deckQueue.push(this.draggingCardId);
-        this.nextCard = this.deckQueue.shift() || 'knight';
-
-        // Update visual textures on HUD slots
-        this.handCardImages[this.draggingCardSlotIndex].setTexture(`card_${this.playerHand[this.draggingCardSlotIndex]}`);
-        this.nextCardImage.setTexture(`card_${this.nextCard}`);
-      }
-
-      // Reset drag elements
-      const activeSlotImg = this.handCardImages[this.draggingCardSlotIndex];
-      this.tweens.add({
-        targets: activeSlotImg,
-        y: height - 52,
-        scaleX: 1.0,
-        scaleY: 1.0,
-        duration: 120
-      });
-
-      this.draggingCardId = null;
-      this.draggingCardSlotIndex = -1;
-      this.dragPreviewCircle!.clear();
-    });
-  }
-
-  private deployPlayerCard(cardId: string, x: number, y: number): void {
+  private spawnAIUnit(cardId: string, x: number, y: number): void {
     const cardDef = CARD_TEMPLATES[cardId];
     if (!cardDef) return;
 
     if (cardDef.type === 'spell') {
-      // Cast spell meteors
+      // AI spell cast (simplified — just apply damage immediately)
       const spellStats = SPELL_STATS[cardId];
-      
-      const spellImpact = this.add.graphics();
-      spellImpact.fillStyle(0xe67e22, 0.4);
-      spellImpact.fillCircle(x, y, spellStats.radius);
-      spellImpact.setDepth(80);
+      if (!spellStats) return;
 
-      // Camera shakes
-      this.cameras.main.shake(200, 0.015);
-
-      this.time.delayedCall(spellStats.travelTime, () => {
-        spellImpact.destroy();
-        
-        // Scan radial units
-        const enemies = this.enemyUnits.getChildren() as Unit[];
-        enemies.forEach(u => {
-          const dist = Phaser.Math.Distance.Between(x, y, u.x, u.y);
-          if (dist <= spellStats.radius) {
-            u.takeDamage(spellStats.damage);
-            this.spawnDamageNumber(u.x, u.y, spellStats.damage, true);
-          }
-        });
-
-        // Scan radial towers
-        const targetTowers = this.towers.getChildren() as Tower[];
-        targetTowers.forEach(t => {
-          if (t.team === 'red') {
-            const dist = Phaser.Math.Distance.Between(x, y, t.x, t.y);
-            if (dist <= spellStats.radius) {
-              t.takeDamage(spellStats.towerDamage);
-              this.spawnDamageNumber(t.x, t.y, spellStats.towerDamage, false);
-            }
-          }
-        });
-
-        // Spawn visual explosion effects particles
-        const emitter = this.add.particles(x, y, 'proj_fireball', {
-          speed: { min: 20, max: 100 },
-          angle: { min: 0, max: 360 },
-          scale: { start: 1.2, end: 0 },
-          blendMode: 'ADD',
-          lifespan: 400,
-          quantity: 16
-        });
-        this.time.delayedCall(400, () => emitter.destroy());
+      const playerUnits = this.playerUnits.getChildren() as Unit[];
+      playerUnits.forEach(u => {
+        const dist = Phaser.Math.Distance.Between(x, y, u.x, u.y);
+        if (dist <= spellStats.radius) {
+          u.takeDamage(spellStats.damage);
+        }
       });
-    } else {
-      // Spawns troop unit
-      this.spawnPlayerUnit(cardId, x, y);
+      return;
     }
-  }
 
-  private spawnPlayerUnit(cardId: string, x: number, y: number): void {
-    const id = `player_${cardId}_${Date.now()}`;
-    const unit = new Unit(this, id, cardId, x, y, 'blue');
-    this.playerUnits.add(unit);
+    const unitType = cardDef.unitType || cardId;
+    const spawnCount = cardDef.spawnCount || 1;
 
-    // Scale pop in
-    unit.scaleX = 0;
-    unit.scaleY = 0;
-    this.tweens.add({ targets: unit, scaleX: 1, scaleY: 1, duration: 150 });
-  }
+    for (let i = 0; i < spawnCount; i++) {
+      const offsetX = spawnCount > 1 ? (Math.random() - 0.5) * 30 : 0;
+      const offsetY = spawnCount > 1 ? (Math.random() - 0.5) * 30 : 0;
 
-  private spawnAIUnit(cardId: string, x: number, y: number): void {
-    const id = `bot_${cardId}_${Date.now()}`;
-    const unit = new Unit(this, id, cardId, x, y, 'red');
-    this.enemyUnits.add(unit);
-    
-    // Scale pop in
-    unit.scaleX = 0;
-    unit.scaleY = 0;
-    this.tweens.add({ targets: unit, scaleX: 1, scaleY: 1, duration: 150 });
+      const id = `bot_${unitType}_${Date.now()}_${i}`;
+      const unit = new Unit(this, id, unitType, x + offsetX, y + offsetY, 'red');
+      this.enemyUnits.add(unit);
+      
+      // Scale pop in
+      unit.scaleX = 0;
+      unit.scaleY = 0;
+      this.tweens.add({ targets: unit, scaleX: 1, scaleY: 1, duration: 150, delay: i * 50 });
+    }
   }
 
   private handleTowerCollapse(opposingTeam: 'blue' | 'red'): void {
@@ -642,6 +533,7 @@ export class BattleScene extends Phaser.Scene {
 
   private endMatch(winnerTeam: 'blue' | 'red' | 'draw'): void {
     this.isGameOver = true;
+    this.deploymentSystem.clearDeploymentState();
     this.scene.start('ResultsScene', { winner: winnerTeam, score: `${this.playerCrowns} - ${this.enemyCrowns}` });
   }
 }

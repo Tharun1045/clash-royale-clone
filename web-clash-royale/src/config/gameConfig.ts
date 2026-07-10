@@ -10,7 +10,9 @@ export const CARD_TEMPLATES: Record<string, CardDefinition> = {
     icon: '⚔️',
     rarity: 'common',
     description: 'Tough melee fighter. Solid on defense and offense.',
-    type: 'troop'
+    type: 'troop',
+    unitType: 'knight',
+    spawnCount: 1
   },
   archers: {
     id: 'archers',
@@ -19,7 +21,9 @@ export const CARD_TEMPLATES: Record<string, CardDefinition> = {
     icon: '🏹',
     rarity: 'common',
     description: 'A pair of light ranged attackers. Target air and ground.',
-    type: 'troop'
+    type: 'troop',
+    unitType: 'archer',
+    spawnCount: 2
   },
   giant: {
     id: 'giant',
@@ -28,7 +32,9 @@ export const CARD_TEMPLATES: Record<string, CardDefinition> = {
     icon: '✊',
     rarity: 'rare',
     description: 'Slow but massive. Targets only towers and buildings.',
-    type: 'troop'
+    type: 'troop',
+    unitType: 'giant',
+    spawnCount: 1
   },
   baby_dragon: {
     id: 'baby_dragon',
@@ -37,7 +43,9 @@ export const CARD_TEMPLATES: Record<string, CardDefinition> = {
     icon: '🐉',
     rarity: 'epic',
     description: 'Flying ranged troop. Attacks air/ground with splash damage.',
-    type: 'troop'
+    type: 'troop',
+    unitType: 'baby_dragon',
+    spawnCount: 1
   },
   skeleton_army: {
     id: 'skeleton_army',
@@ -46,7 +54,9 @@ export const CARD_TEMPLATES: Record<string, CardDefinition> = {
     icon: '💀',
     rarity: 'epic',
     description: 'Spawns a swarm of Skeletons to overwhelm heavy units.',
-    type: 'troop'
+    type: 'troop',
+    unitType: 'skeleton',
+    spawnCount: 6
   },
   mini_pekka: {
     id: 'mini_pekka',
@@ -55,7 +65,9 @@ export const CARD_TEMPLATES: Record<string, CardDefinition> = {
     icon: '🤖',
     rarity: 'rare',
     description: 'Fast, high-damage melee attacker. Fragile but deadly.',
-    type: 'troop'
+    type: 'troop',
+    unitType: 'mini_pekka',
+    spawnCount: 1
   },
   fireball: {
     id: 'fireball',
